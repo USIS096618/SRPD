@@ -61,6 +61,10 @@ export default class Mensajes extends Component {
         })
     }
 
+    componentDidUpdate(){
+        this.seacrhMessage()
+    }
+
     render(){
         const ListData = this.state.mensajes.map( (data, i) => {
             return <ListMassage mensaje={data} image={this.props.image} key={i}></ListMassage>
