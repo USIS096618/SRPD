@@ -694,7 +694,8 @@ a:hover{
     padding: 8px;
     border-radius: 5px;
     border: none;
-    outline: none;
+	outline: none;
+	z-index: 2;
 }
 
 .msg-input:focus{
