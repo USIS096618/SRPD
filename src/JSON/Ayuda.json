@@ -1,0 +1,113 @@
+{
+    "uso" : [
+        {
+            "Nombre": "Creación de una cuenta",
+            "link": "/Ayuda_/Uso/Crear_Cuenta"
+        },
+        {
+            "Nombre": "Tu pagina de inicio",
+            "link": "/Ayuda_/Uso/Mi_Pagina"
+        },
+        {
+            "Nombre": "Bandeja",
+            "subMenu": [
+                {
+                    "Nombre": "¿Que es mi bandeja?",
+                    "link": "/Ayuda_/Uso/Bandeja"
+                },
+                {
+                    "Nombre": "¿Como enviar mensaje desde mi bandeja?",
+                    "link": "/Ayuda_/Uso/Bandeja_Envio_Mensaje"
+                },
+                {
+                    "Nombre": "¿Como envió de fotos desde mi bandeja?",
+                    "link": "/Ayuda_/Uso/Bandeja_Envio_Image"
+                }
+            ]
+        },
+        {
+            "Nombre": "Foro",
+            "subMenu": [
+                {
+                    "Nombre": "¿Que es el foro?",
+                    "link": "/Ayuda_/Uso/Foro"
+                },
+                {
+                    "Nombre": "Nuevo Foro",
+                    "link": "/Ayuda_/Uso/Nuevo_Foro"
+                },
+                {
+                    "Nombre": "Editar Foro",
+                    "link": "/Ayuda_/Uso/Editar_Foro"
+                },
+                {
+                    "Nombre": "Eliminar mi Foro",
+                    "link": "/Ayuda_/Uso/Eliminar_Foro"
+                },
+                {
+                    "Nombre": "Comentarios",
+                    "link": "/Ayuda_/Uso/Foro_Comentarios"
+                }
+            ]
+        }
+    ],
+    "administra": [
+        {
+            "Nombre": "Inicio de Sesión y contraseña",
+            "subMenu": [
+                {
+                    "Nombre": "Inicio sesión en tu cuenta",
+                    "link": "/Ayuda_/Administrar/Sesion"
+                },
+                {
+                    "Nombre": "¿Como cambio mi contraseña?",
+                    "link": "/Ayuda_/Administrar/Cambio_Pass"
+                }
+            ]
+        },
+        {
+            "Nombre": "Configuración de tu cuenta",
+            "subMenu": [
+                {
+                    "Nombre": "¿Donde puedo encontrar la configuración de mi cuenta?" ,
+                    "link": "/Ayuda_/Administrar/Configuracion"
+                },
+                {
+                    "Nombre": "Agregar y Editar información del perfil",
+                    "link": "/Ayuda_/Administrar/Informacion"
+                }
+            ]
+        },{
+            "Nombre": "¿Como descargar tu información?",
+            "link": "/Ayuda_/Administrar/Descargar_Informacion"
+        }
+    ],
+    "politica": [
+        {
+            "Nombre": "Reportar conductas abusivas",
+            "subMenu": [
+                {
+                    "Nombre": "¿Como reportar contenido?",
+                    "link": "/Ayuda_/Politica_Reportes/Reportar"
+                },
+                {
+                    "Nombre": "¿No tienes cuenta?",
+                    "link": "/Ayuda_/Politica_Reportes/Reportar_Sin_Cuenta"
+                }
+            ]
+        },
+        {
+            "Nombre": "Información sobre nuestras políticas",
+            "subMenu": [
+                {
+                    "Nombre": "¿Que es lo que no esta permitido en el SRPD?",
+                    "link": "/Ayuda_/Politica_Reportes/No_Permitido"
+                },
+                {
+                    "Nombre": "¿Que tipo de comportamiento identifica como abusivos SRPD?",
+                    "link": "/Ayuda_/Politica_Reportes/Comportamiento"
+                }
+            ]
+        }
+    ]
+}

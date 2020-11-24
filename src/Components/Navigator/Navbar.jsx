@@ -17,10 +17,10 @@ const Nav = styled.nav`
   }
 `
 
-const Navbar = () => {
+const Navbar = (props) => {
   return (
     <Nav>
-      <Burger />
+      <Burger ayuda={props.ayuda}/>
     </Nav>
   )
 }

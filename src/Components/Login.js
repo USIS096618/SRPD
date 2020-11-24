@@ -6,6 +6,7 @@ import axios from 'axios'
 import Global from '../Global'
 import JWT from '../Class/JWT'
 import Identificador from '../Class/Identificador'
+import Push from '../Class/Push'
 
 export default class LoginComponent extends Component {
 
@@ -24,7 +25,7 @@ export default class LoginComponent extends Component {
         this.props.Registrar('Register');
     }
 
-    Login = (e) => {
+    Login = async (e) => {
         e.preventDefault();
         
         Swal.fire({
@@ -43,10 +44,27 @@ export default class LoginComponent extends Component {
 
         if (this.DocenteRef.current.checked) {
             axios.post(Global.servidor + 'LoginDocente', params)
-            .then(resp => {
-                Identificador.setIdentificador(resp.data.user[0]._id)
+            .then(async (resp) => {
+
+                const {_id, sesionActive} = resp.data.user[0]
+
+                Identificador.setIdentificador(_id)
                 JWT.setJWT(resp.data.token)
                 this.connectSocket.emit('newVisit', {});
+
+                const subscription = await Push.getSubscription();
+
+                const positionNew = sesionActive.length
+
+                sesionActive.push(subscription)
+
+                await axios.post(Global.servidor + "pushDocente", {id: resp.data.user[0]._id, sesion: sesionActive}).then(() => {
+                    Push.setPosition(positionNew)
+                })
+                .catch( err => {
+                    console.error(err)
+                })
+
                 return resp.data.token;
             })
             .then( resp => {
@@ -58,8 +76,18 @@ export default class LoginComponent extends Component {
             });
         } else {
             axios.post(Global.servidor + 'Login', params)
-            .then(resp => {
+            .then(async (resp) => {
                 JWT.setJWT(resp.data.token)
+
+                const subscription = await Push.getSubscription();
+                
+                await axios.post(Global.servidor + "pushAdmin", {sesion: subscription}).then((resp) => {
+                    Push.setPosition(resp.data.doc._id)
+                })
+                .catch((err) => {
+                    console.error(err);
+                })
+
                 return resp.data.token;
             })
             .then( resp => {
@@ -103,6 +131,7 @@ export default class LoginComponent extends Component {
                 </div>
 
                 <Link to="/Recuperar">¿Has olvidado la contraseña?</Link>
+                <Link to="/Ayuda">¿Necesitas ayuda?</Link>
                 
                 <div className="type-access">
                     <div className="type-access-container">

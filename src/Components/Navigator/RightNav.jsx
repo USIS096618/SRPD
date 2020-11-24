@@ -1,9 +1,12 @@
 import React from 'react';
-import {Link, NavLink} from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import styled from 'styled-components';
 import Swal from 'sweetalert2'
 import JWT from '../../Class/JWT';
 import Identificador from '../../Class/Identificador';
+import Push from '../../Class/Push';
+import Axios from 'axios';
+import Global from '../../Global';
 
 const Ul = styled.ul`
   list-style: none;
@@ -40,7 +43,7 @@ const RightNav = ({ open }) => {
     window.location.reload(true);
   }
 
-  var Salir = ()=>{
+  var Salir = async () => {
     Swal.fire({
       title: '¿Estas seguro de cerrar sesión?',
       icon: 'warning',
@@ -49,11 +52,26 @@ const RightNav = ({ open }) => {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Si',
       cancelButtonText: 'No'
-    }).then((result) => {
+    }).then(async (result) => {
       console.log(result.value);
       if (result.value) {
         JWT.clearJWT()
+
+        if (Identificador.validatorIdentificador()) {
+          await Axios.delete(Global.servidor + "pushDeleteDocente", { params: { id: Identificador.getIdentificador(), subscription: await Push.getSubscription() } }).then((resp) => {
+            // console.log(resp.data);
+          })
+        }
+        else {
+          await Axios.delete(Global.servidor + "pushDeleteAdmin", { params: { id: Push.getPosition() } }).then((resp) => {
+            // console.log(resp.data);
+          })
+        }
+
         Identificador.clearIdentificador()
+
+        Push.clearPosition()
+
         redirection();
       }
     });

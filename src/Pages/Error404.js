@@ -1,4 +1,5 @@
 import React, {Fragment} from 'react'
+import { Link } from 'react-router-dom'
 import '../Assets/CSS/Error404.css'
 
 const Error404 = () => {
@@ -8,7 +9,7 @@ const Error404 = () => {
             <div className="divFull"></div>
             <div className="notFound">
                 <h2 className="">Pagina no encontrada</h2>
-                <a className="centerA" href="/">Volver</a>
+                <Link className="centerA" to="/">Volver</Link>
             </div>
         </Fragment>
     )

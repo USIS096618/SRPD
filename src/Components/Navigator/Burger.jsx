@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import RightNav from './RightNav';
+import RightNavHelp from './RightNavHelp';
 
 const StyledBurger = styled.div`
   width: 2rem;
@@ -10,7 +11,7 @@ const StyledBurger = styled.div`
   right: 20px;
   z-index: 20;
   display: none;
-  @media (max-width: 586px) {
+  @media (max-width: ${({ayuda}) => !ayuda ? '586px' : '681px'}) {
     display: flex;
     justify-content: space-around;
     flex-flow: column nowrap;
@@ -35,17 +36,20 @@ const StyledBurger = styled.div`
   }
 `;
 
-const Burger = () => {
+const Burger = (props) => {
   const [open, setOpen] = useState(false)
   
   return (
     <>
-      <StyledBurger open={open} onClick={() => setOpen(!open)}>
+      <StyledBurger open={open} onClick={() => setOpen(!open)} ayuda={props.ayuda}>
         <div />
         <div />
         <div />
       </StyledBurger>
-      <RightNav open={open}/>
+      {
+        props.ayuda ? (<RightNavHelp open={open} />) : (<RightNav open={open}/>)
+      }
+      
     </>
   )
 }

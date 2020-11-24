@@ -16,6 +16,24 @@ import RecuperarCuenta from './Pages/RecuperarCuenta'
 import forgetPassword from './Pages/forgetPassword'
 import Footer from './Components/Footer'
 import Error404 from './Pages/Error404'
+import Help from './Pages/Help/Help';
+import PageCrearCuenta from './Pages/Help/Uso/PageCrearCuenta';
+import PageHomeUso from './Pages/Help/Uso/PageHomeUso';
+import PageMiInicio from './Pages/Help/Uso/PageMiInicio';
+import PageBandeja from './Pages/Help/Uso/PageBandeja';
+import PageBandejaMensaje from './Pages/Help/Uso/PageBandejaMensaje';
+import PageBandejaImage from './Pages/Help/Uso/PageBandejaImage';
+import PageForo from './Pages/Help/Uso/PageForo';
+import PageNewForo from './Pages/Help/Uso/PageNewForo';
+import PageEditForo from './Pages/Help/Uso/PageEditForo';
+import PageDeleteForo from './Pages/Help/Uso/PageDelete';
+import PageCommentForo from './Pages/Help/Uso/PageCommentForo';
+import PageHomeAdmin from './Pages/Help/Administracion/PageHomeAdmin';
+import PageSesionAdmin from './Pages/Help/Administracion/PageSesionAdmin';
+import PageCambioPassAdmin from './Pages/Help/Administracion/PageCambioPassAdmin';
+import PageConfiguracionAdmin from './Pages/Help/Administracion/PageConfiguracionAdmin';
+import PageInformacionAdmin from './Pages/Help/Administracion/PageInformacionAdmin';
+import PageDownloadAdmin from './Pages/Help/Administracion/PageDownloadAdmin';
 
 class App extends Component {
 
@@ -39,6 +57,39 @@ class App extends Component {
               <ProtectedRoute exact path="/Foro/:id" component={ForoComment} />
               <Route exact path="/Recuperar" component={RecuperarCuenta} />
               <Route exact path="/Recuperar/:id/:type" component={forgetPassword} />
+
+              {/* Rutas de ayuda */}
+              <Route exact path="/Ayuda" component={Help} />
+
+                {/* Rutas de Uso SRPD */}
+              <Route exact path="/Ayuda_/Uso" component={PageHomeUso} />
+              <Route exact path="/Ayuda_/Uso/Crear_Cuenta" component={PageCrearCuenta} />
+              <Route exact path="/Ayuda_/Uso/Mi_Pagina" component={PageMiInicio} />
+              <Route exact path="/Ayuda_/Uso/Bandeja" component={PageBandeja} />
+              <Route exact path="/Ayuda_/Uso/Bandeja_Envio_Mensaje" component={PageBandejaMensaje} />
+              <Route exact path="/Ayuda_/Uso/Bandeja_Envio_Image" component={PageBandejaImage} />
+              <Route exact path="/Ayuda_/Uso/Foro" component={PageForo} />
+              <Route exact path="/Ayuda_/Uso/Nuevo_Foro" component={PageNewForo} />
+              <Route exact path="/Ayuda_/Uso/Editar_Foro" component={PageEditForo} />
+              <Route exact path="/Ayuda_/Uso/Eliminar_Foro" component={PageDeleteForo} />
+              <Route exact path="/Ayuda_/Uso/Foro_Comentarios" component={PageCommentForo} />
+
+                {/* Rutas de Administracion del SRPD */}
+              <Route exact path="/Ayuda_/Administrar" component={PageHomeAdmin} />
+              <Route exact path="/Ayuda_/Administrar/Sesion" component={PageSesionAdmin} />
+              <Route exact path="/Ayuda_/Administrar/Cambio_Pass" component={PageCambioPassAdmin} />
+              <Route exact path="/Ayuda_/Administrar/Configuracion" component={PageConfiguracionAdmin} />
+              <Route exact path="/Ayuda_/Administrar/Informacion" component={PageInformacionAdmin} />
+              <Route exact path="/Ayuda_/Administrar/Descargar_Informacion" component={PageDownloadAdmin} />
+
+                {/* Rutas de Politica y Reportes SRPD */}
+              <Route exact path="/Ayuda_/Politica_Reportes" component={Help} />
+              <Route exact path="/Ayuda_/Politica_Reportes/Reportar" component={Help} />
+              <Route exact path="/Ayuda_/Politica_Reportes/Reportar_Sin_Cuenta" component={Help} />
+              <Route exact path="/Ayuda_/Politica_Reportes/No_Permitido" component={Help} />
+              <Route exact path="/Ayuda_/Politica_Reportes/Comportamiento" component={Help} />
+
+              {/* Ruta de error 404 */}
               <Route exact path="**" component={Error404} />
             </Switch>
           </BrowserRouter>

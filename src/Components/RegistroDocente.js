@@ -214,13 +214,13 @@ export default class RegistroDocente extends Component {
 
     async saveRegister(data){
 
-        // Swal.fire({
-        //     title: 'Registrando Docente...',
-        //     allowOutsideClick: false,
-        //     onBeforeOpen: () => {
-        //         Swal.showLoading()
-        //     },
-        // });
+        Swal.fire({
+            title: 'Registrando Docente...',
+            allowOutsideClick: false,
+            onBeforeOpen: () => {
+                Swal.showLoading()
+            },
+        });
         
         data.PerfilImage = await this.saveImages(data.PerfilImage, "SavePerfil")
         data.Academica.TituloImage = await this.saveImages(data.Academica.TituloImage, "SaveTitulo")
