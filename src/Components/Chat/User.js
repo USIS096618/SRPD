@@ -10,7 +10,7 @@ export default class User extends Component {
     render() {
         const docente = this.props.docente;
         return (
-            <div className="user" onClick={this.docenteSelection}>
+            <div className={docente.typeAcountLatestMessage ? "pending" : "user"} onClick={this.docenteSelection}>
                 <img className="circle-img" src={docente.PerfilImage} alt=""/>
                 <div className="user-info">
                     <div className="user-title">

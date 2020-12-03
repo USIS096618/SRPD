@@ -1,7 +1,7 @@
 import io from 'socket.io-client'
 
 const Global = {
-    // servidor: 'http://192.168.1.11:3900/',
+    // servidor: 'http://localhost:3900/',
     // ConnectChat: io('http://localhost:3380'),
     servidor: 'https://srpd-backend.herokuapp.com/',
     ConnectChat: io('https://chat-srpd.herokuapp.com/'),

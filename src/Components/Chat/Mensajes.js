@@ -23,6 +23,7 @@ export default class Mensajes extends Component {
         const params = {
             latestChatTime: Moment().format(),
             latestChatMessage: message.info.foto !== null ? 'imagen' : message.info.message,
+            typeAcount: Identificador.validatorIdentificador(),
             id: message.id
         }
 

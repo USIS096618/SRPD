@@ -733,6 +733,19 @@ footer {
 	cursor: pointer;
 }
 
+.pending {
+	display: flex;
+	flex-direction: row;
+	padding: 10px;
+	background-color: brown;
+	border-bottom: 1px solid #0b3c8f;
+}
+
+.pending:hover {
+	background-color: rgb(21, 21, 172);
+	cursor: pointer;
+}
+
 .user-info {
 	display: flex;
 	flex-direction: column;
