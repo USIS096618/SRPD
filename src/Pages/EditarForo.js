@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react'
+import React, { Component, Fragment } from 'react'
 import Editor from '../Components/Editor'
 import Axios from 'axios'
 import Global from '../Global'
@@ -17,8 +17,8 @@ export default class NewForo extends Component {
     sendForo = (data) => {
         const headers = {
             authorization: `Bearer ${JWT.getJWT()}`
-        } 
-        Axios.put(Global.servidor + "updateForo", data, {headers})
+        }
+        Axios.put(Global.servidor + "updateForo", data, { headers })
             .then((resp) => {
                 if (resp.data.status !== 'error') {
                     Swal.fire('Seccion actualizada correctamente', '', 'success');
@@ -30,12 +30,31 @@ export default class NewForo extends Component {
                     Swal.fire('Error al actualizar la seccion', '', 'info');
                 }
             })
-            .catch( (err) => {
+            .catch((err) => {
                 Swal.fire('Error al conectar con el servidor', '', 'error');
             })
     }
 
-    submitTest = (e) => {
+    checkText = async (text) => {
+        var value = true
+        await Axios.post(Global.servidor + "pruebaAPItext", { text: text.trim() })
+            .then((resp) => {
+                const api = resp.data
+
+                if (!api.profanity) {
+                    value = false
+                } else {
+                    Swal.fire('Contenido de Agresion', api.text, 'error')
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+
+        return value
+    }
+
+    submitTest = async (e) => {
 
         const input = document.getElementById("tituloComment").value
 
@@ -50,53 +69,76 @@ export default class NewForo extends Component {
                     Swal.showLoading()
                 },
             });
-    
+
             const descripcion = e;
             const img = document.getElementById("btn_enviar");
             const titulo = document.getElementById("tituloComment").value;
-    
-            if (img.files[0]) {
-    
-                const headers = {
-                    authorization: `Bearer ${JWT.getJWT()}`
-                }
-    
-                const formData = new FormData();
-    
-                formData.append(
-                    'file0',
-                    img.files[0],
-                    img.files[0].name
-                )
-    
-                Axios.post(Global.servidor + "saveImageForo", formData, {headers})
-                    .then((resp) => {
+
+            const checkTittle = await this.checkText(titulo);
+
+            if (!checkTittle) {
+                const checkDescription = await this.checkText(descripcion)
+
+                if (!checkDescription) {
+
+                    if (img.files[0]) {
+
+                        const headers = {
+                            authorization: `Bearer ${JWT.getJWT()}`
+                        }
+
+                        const formData = new FormData();
+
+                        formData.append(
+                            'file0',
+                            img.files[0],
+                            img.files[0].name
+                        )
+
+                        Axios.post(Global.servidor + "saveImageForo", formData, { headers })
+                            .then((resp) => {
+                                const informationSend = {
+                                    id: this.state.informacion._id,
+                                    data: {
+                                        titulo,
+                                        descripcion,
+                                        imagen: resp.data.image
+                                    }
+                                }
+
+                                Axios.post(Global.servidor + "pruebaAPI", { url: informationSend.data.imagen }).then((resp) => {
+
+                                    if (resp.data.profanity || resp.data.nudity) {
+                                        Swal.fire('', resp.data.message, 'error')
+
+                                    }
+                                    else {
+
+                                        this.sendForo(informationSend)
+                                    }
+                                }).catch((err) => {
+                                    console.log(err);
+                                })
+                            })
+                            .catch((err) => {
+                                Swal.fire('Error al subir imagen', '', 'info');
+                            })
+                    } else {
                         const informationSend = {
                             id: this.state.informacion._id,
                             data: {
-                                titulo, 
-                                descripcion, 
-                                imagen: resp.data.image
+                                titulo,
+                                descripcion,
+                                imagen: this.state.informacion.imagen
                             }
                         }
-    
+
                         this.sendForo(informationSend)
-                    })
-                    .catch((err) => {
-                        Swal.fire('Error al subir imagen', '', 'info');
-                    })
-            } else{
-                const informationSend = {
-                    id: this.state.informacion._id,
-                    data: {
-                        titulo, 
-                        descripcion, 
-                        imagen: this.state.informacion.imagen
                     }
                 }
-    
-                this.sendForo(informationSend)
             }
+
+
         }
     }
 
@@ -104,7 +146,7 @@ export default class NewForo extends Component {
         const headers = {
             authorization: `Bearer ${JWT.getJWT()}`
         }
-        Axios.get(Global.servidor + "getForo/" + this.props.match.params.id, {headers})
+        Axios.get(Global.servidor + "getForo/" + this.props.match.params.id, { headers })
             .then((resp) => {
                 this.setState({
                     informacion: resp.data.Foros[0]
@@ -126,7 +168,7 @@ export default class NewForo extends Component {
         this.getForo()
     }
 
-    render(){
+    render() {
 
         if (this.state.redirect) {
             return (<Redirect to="/Foro"></Redirect>)
@@ -138,8 +180,8 @@ export default class NewForo extends Component {
                     this.state.informacion !== null ? (
                         <Editor onSubmit={this.submitTest}></Editor>
                     ) : (
-                        <label>Cargando...</label>
-                    )
+                            <label>Cargando...</label>
+                        )
                 }
             </Fragment>
         )

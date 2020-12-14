@@ -6,6 +6,7 @@ import Axios from 'axios'
 import Global from '../../Global'
 import JWT from '../../Class/JWT'
 import Identificador from '../../Class/Identificador'
+import Swal from 'sweetalert2'
 
 export default class ChatColumn extends Component {
     state = {
@@ -33,7 +34,7 @@ export default class ChatColumn extends Component {
         this.connectSocket = null
     }
 
-    sendMessage = (e) => {
+    sendMessage = async (e) => {
         
 
         if (e.key === "Enter" && this.dataMensaje.current.value.trim() !== '') {
@@ -49,10 +50,23 @@ export default class ChatColumn extends Component {
                 id
             };
 
-            this.setState({
-                message: this.state.message,
-                sendMessage: data
-            })
+            await Axios.post(Global.servidor + "pruebaAPItext", {text: this.dataMensaje.current.value.trim()})
+                .then((resp) => {
+                    const api = resp.data
+
+                    if (!api.profanity) {
+                        this.setState({
+                            message: this.state.message,
+                            sendMessage: data
+                        })
+                    } else {
+                        Swal.fire('Contenido de Agresion', api.text, 'error')
+                    }
+                })
+                .catch((err) => {
+
+                })
+            
         }
     }
 
@@ -95,9 +109,21 @@ export default class ChatColumn extends Component {
                     id
                 };
 
-                this.setState({
-                    message: this.state.message,
-                    sendMessage: data
+
+                Axios.post(Global.servidor + "pruebaAPI", {url: data.info.foto}).then((resp) => {
+
+                    if (resp.data.profanity || resp.data.nudity) {
+                        Swal.fire('', resp.data.message, 'error')
+                        
+                    }
+                    else{
+                        this.setState({
+                            message: this.state.message,
+                            sendMessage: data
+                        })
+                    }
+                }).catch((err) => {
+                    console.log(err);
                 })
             })
             .catch((err) => {

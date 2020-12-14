@@ -1,11 +1,23 @@
+/**
+ * Registro de notificacion push
+ * @class
+ */
 class Push {
 
+    /**
+     * @constructor
+     */
     constructor() { 
         const value_or_null = (document.cookie.match(/^(?:.*;)?\s*Position\s*=\s*([^;]+)(?:.*)?$/)||[,null])[1]
         this.Position = value_or_null !== null ? value_or_null : ''
         this.publicVapidKey = "BGqQ2mAh7U94YP99ZFvkV5kpw1-Pt4MQ_9yQjMMvnTvgIA31vP9bHarflB10gO0y-v_go8V58tIzHLzgwBQKc8Q"
     }
 
+    /**
+     * @description validamos si el navegador tiene serviceWorker
+     * @function getSubscription
+     * @exports serviceWorker
+     */
     getSubscription = async () => {
 
         if ('serviceWorker' in navigator) {
@@ -15,6 +27,12 @@ class Push {
         return null
     }
 
+    /**
+     * Registramos el service worker para la subscripcion
+     * @async
+     * @function send
+     * @exports serviceWorker
+     */
     send = async () => {
         console.log('Registering service worker.....');
         const register = await navigator.serviceWorker.register('/serviceWorker.js', {
@@ -33,6 +51,10 @@ class Push {
         return subscription
     }
 
+    /**
+     * @function urlBase64ToUint8Array
+     * @param {String} base64String 
+     */
     urlBase64ToUint8Array = (base64String) => {
         const padding = '='.repeat((4 - base64String.length % 4) % 4);
         const base64 = (base64String + padding)
@@ -47,7 +69,11 @@ class Push {
         }
         return outputArray;
     }
-
+    /**
+     * Agregamos la posicion en la que fue almacenada
+     * @function setPosition
+     * @param {String} index 
+     */
     setPosition = (index) => {
         this.Position = index;
 
@@ -57,10 +83,19 @@ class Push {
         document.cookie = `Position = ${index}; expires = ${date.toUTCString()};`
     }
 
+    /**
+     * Obtenemos la posicion en la que se encuentra la subscripcion
+     * @function getPosition
+     * @exports Position
+     */
     getPosition = () => {
         return this.Position
     }
 
+    /**
+     * Limpiamos la subscripcion
+     * @function clearPosition
+     */
     clearPosition(){
         this.Position = '';
         document.cookie = `Position = ;`
@@ -68,4 +103,8 @@ class Push {
 
 }
 
+/**
+ * Exportamos la clase
+ * @exports Push
+ */
 export default new Push()

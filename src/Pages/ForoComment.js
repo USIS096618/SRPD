@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react'
+import React, { Component, Fragment } from 'react'
 import HeaderComponent from '../Components/Header'
 import Axios from 'axios'
 import Global from '../Global'
@@ -7,10 +7,11 @@ import ForoChatComment from '../Components/ForoChatComment'
 import Image from '../Assets/Images/svg/iconImage.svg'
 import JWT from '../Class/JWT'
 import Identificador from '../Class/Identificador'
+import Swal from 'sweetalert2'
 
 export default class ForoComment extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props)
         this.connectSocket = Global.ConnectChat
     }
@@ -38,7 +39,7 @@ export default class ForoComment extends Component {
             authorization: `Bearer ${JWT.getJWT()}`
         }
 
-        Axios.post(Global.servidor + "saveImageForoComment", formData, { headers})
+        Axios.post(Global.servidor + "saveImageForoComment", formData, { headers })
             .then((resp) => {
                 var id = this.props.match.params.id;
                 const data = {
@@ -50,17 +51,30 @@ export default class ForoComment extends Component {
                     id
                 };
 
-                this.connectSocket.emit("sendComment", data);
+                Axios.post(Global.servidor + "pruebaAPI", { url: data.info.foto }).then((resp) => {
+
+                    if (resp.data.profanity || resp.data.nudity) {
+                        Swal.fire('', resp.data.message, 'error')
+
+                    }
+                    else {
+
+                        this.connectSocket.emit("sendComment", data);
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                })
+
             })
             .catch((err) => {
                 console.log(err);
             })
 
-        
+
     }
 
-    sendMessage = (e) => {
-        
+    sendMessage = async (e) => {
+
 
         if (e.key === "Enter" && this.dataMensaje.current.value.trim() !== '') {
             var id = this.props.match.params.id;
@@ -73,9 +87,23 @@ export default class ForoComment extends Component {
                 id
             };
 
-            this.connectSocket.emit("sendComment", data);
+            await Axios.post(Global.servidor + "pruebaAPItext", { text: data.info.message.trim() })
+                .then((resp) => {
+                    const api = resp.data
 
-            this.dataMensaje.current.value = ""
+                    if (!api.profanity) {
+
+                        this.connectSocket.emit("sendComment", data);
+
+                        this.dataMensaje.current.value = ""
+
+                    } else {
+                        Swal.fire('Contenido de Agresion', api.text, 'error')
+                    }
+                })
+                .catch((err) => {
+
+                })
 
         }
     }
@@ -84,7 +112,7 @@ export default class ForoComment extends Component {
         const headers = {
             authorization: `Bearer ${JWT.getJWT()}`
         }
-        Axios.get(Global.servidor + "getForo/" + this.props.match.params.id, {headers})
+        Axios.get(Global.servidor + "getForo/" + this.props.match.params.id, { headers })
             .then((resp) => {
                 this.setState({
                     informacion: resp.data.Foros,
@@ -105,7 +133,7 @@ export default class ForoComment extends Component {
         this.getForo()
         this.searchComment()
         this.connectSocket.on("recivedComment", (data) => {
-            
+
             this.setState({
                 informacion: this.state.informacion,
                 comentarios: data
@@ -116,7 +144,7 @@ export default class ForoComment extends Component {
         this.connectSocket.on("searchCMT", (data) => {
             this.searchComment()
         })
-        
+
     }
 
     render() {
@@ -129,11 +157,11 @@ export default class ForoComment extends Component {
                 return <ForoChatComment data={value} key={i}></ForoChatComment>
             })
         }
-        else{
+        else {
             Comentarios = <label></label>
         }
-        
-        return(
+
+        return (
             <Fragment>
                 <HeaderComponent></HeaderComponent>
 
@@ -143,8 +171,8 @@ export default class ForoComment extends Component {
                             <div className="Publish-Foro">
                                 <div className="title">
                                     <div className="Tarjeta-Usuario">
-                                        
-                                        <img className="circle-img Tarjeta-circle-image" src={data.PerfilImage[0]} alt={data.Nombre[0]}/>
+
+                                        <img className="circle-img Tarjeta-circle-image" src={data.PerfilImage[0]} alt={data.Nombre[0]} />
                                         <div className="Tarjeta-Publish">
                                             <h2>{data.Nombre[0]}</h2>
                                             <label>{Moment(data.datePublish).fromNow(Date.now)}</label>
@@ -156,8 +184,8 @@ export default class ForoComment extends Component {
                                         <div className="Tarjeta-Name">
                                             <h2><u>{data.titulo}</u></h2>
                                         </div>
-                                        <div className="Tarjeta-Description" dangerouslySetInnerHTML={{__html: data.descripcion}}>
-                                            
+                                        <div className="Tarjeta-Description" dangerouslySetInnerHTML={{ __html: data.descripcion }}>
+
                                         </div>
                                         {
                                             data.imagen !== null &&
@@ -165,7 +193,7 @@ export default class ForoComment extends Component {
                                                 <img src={data.imagen} alt={data.titulo}></img>
                                             </div>
                                         }
-                                        
+
                                     </div>
                                 </div>
                             </div>
@@ -181,18 +209,18 @@ export default class ForoComment extends Component {
                                     Identificador.validatorIdentificador() &&
                                     <div className="input-container">
                                         <div id="div_file">
-                                            <img id="texto" src={Image} alt="icono"/>
-                                            <input type="file" id="btn_enviar" accept="image/*" onChange={this.fileChange}/>
+                                            <img id="texto" src={Image} alt="icono" />
+                                            <input type="file" id="btn_enviar" accept="image/*" onChange={this.fileChange} />
                                         </div>
-                                        <input className="msg-input" type="text" placeholder="Escribe un mensaje" ref={this.dataMensaje} onKeyPress={this.sendMessage}/>
+                                        <input className="msg-input" type="text" placeholder="Escribe un mensaje" ref={this.dataMensaje} onKeyPress={this.sendMessage} />
                                     </div>
                                 }
-                                
+
                             </div>
                         </div>
                     ) : (
-                        <label>Cargando...</label>
-                    )
+                            <label>Cargando...</label>
+                        )
                 }
             </Fragment>
         )
