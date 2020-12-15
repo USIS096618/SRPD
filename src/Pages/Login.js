@@ -6,12 +6,25 @@ import LoginComponent from '../Components/Login'
 import Register from '../Components/SignIn'
 import Swal from 'sweetalert2'
 
-
+/**
+ * @file Es la pagina que se encarga del logeo
+ * @author SRPD
+ * @class
+ * @export Login
+ */
 export default class Login extends Component {
+
+    /**
+     * @constant
+     */
     state = {
         login: 'Login'
     }
-
+    
+    /**
+     * @function CambiarState
+     * @param {Event} event Determina Si estara en modo Login o Regitro
+     */
     CambiarState = (event) => {
         if (event === 'Register') {
             Swal.fire({

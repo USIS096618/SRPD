@@ -7,13 +7,26 @@ import HeaderComponent from '../Components/Header'
 import JWT from '../Class/JWT'
 import Identificador from '../Class/Identificador'
 
+/**
+ * @file Este archivo contiene todo lo referente con la pagina de Bandeja
+ * @author SRPD
+ * 
+ * @class
+ * @exports Bandeja
+ */
 export default class Bandeja extends Component {
 
+    /**
+     * @constructor
+     */
     constructor(props){
         super(props)
         this.connectSocket = Global.ConnectChat
     }
 
+    /**
+     * @global
+     */
     state = {
         Docentes: {
             recopilados: null,
@@ -24,8 +37,12 @@ export default class Bandeja extends Component {
 
     search = React.createRef();
 
+    /**
+     * @function getDocentes
+     */
     getDocentes = () => {
         
+        /** @constant */
         const headers = {
             authorization: `Bearer ${JWT.getJWT()}`
         } 
@@ -46,6 +63,10 @@ export default class Bandeja extends Component {
 
     }
 
+    /**
+     * @function docenteSelection
+     * @param {JSON} event Contiene el docente seleccionado para el chat
+     */
     docenteSelection = (event) => {
         this.setState({
             Docentes: this.state.Docentes,
@@ -53,13 +74,24 @@ export default class Bandeja extends Component {
         })
     }
 
+    /**
+     * @function searchDocentes
+     * @param {JSON} event Contiene la tecla que a presionado el usuario
+     */
     searchDocentes = (event) => {
         if (event.key === "Enter") {
 
+            /**
+             * @constant
+             */
             const NombreSearch = this.search.current.value.toLowerCase();
 
+            /**
+             * @constant
+             */
             const ArrayFilter = this.state.Docentes.recopilados.filter((val, i) => {
 
+                /** @constant */
                 const Nombre =  val.Nombre.toLowerCase()
                 
                 if (Nombre.indexOf(NombreSearch) !== -1 ) {
@@ -81,18 +113,30 @@ export default class Bandeja extends Component {
         
     }
 
+    /**
+     * Esta funcion se ejecuta cuando el componente es montado
+     * @function UNSAFE_componentWillMount
+     */
     UNSAFE_componentWillMount(){
         this.getDocentes()
 
 
     }
 
+    /**
+     * Esta funcion se ejecuta cuando el componente se a terminado de montar
+     * @function componentDidMount
+     */
     componentDidMount(){
         this.connectSocket.on("searchMSG", (data) => {
             this.getDocentes();
         })
     }
 
+    /**
+     * @function render
+     * @returns {HTML} Retorna la vista de la pagina de bandeja
+     */
     render(){
         var docentes = null;
         if (this.state.Docentes.mostrar !== null && this.state.Docentes.mostrar !== undefined) {

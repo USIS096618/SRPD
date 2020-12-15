@@ -4,8 +4,18 @@ import Paginador from '../Components/Paginador'
 import RegistroDocentes from '../Components/RegistroDocente'
 import Identificador from '../Class/Identificador';
 
+/**
+ * @file Es la pagina de Registro de docente
+ * @author SRPD
+ * @class
+ * @exports Registro
+ */
 export default class Registro extends Component {
 
+    /**
+     * @funtion render
+     * @returns {HTML} Regresa la vista de la pagina de Registro
+     */
     render(){
         return (
             <Fragment>

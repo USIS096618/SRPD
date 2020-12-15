@@ -1,5 +1,13 @@
+/**
+ * @file Se encarga de almacenar todas las variables globales de la aplicacion
+ * @author SRPD
+ */
 import io from 'socket.io-client'
 
+/**
+ * @global
+ * @constant <JSON> Global
+ */
 const Global = {
     // servidor: 'http://localhost:3900/',
     // ConnectChat: io('http://localhost:3380'),

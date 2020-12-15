@@ -9,12 +9,26 @@ import Identificador from '../Class/Identificador'
 import { Redirect } from 'react-router-dom'
 import NotAccess from '../Components/NotAccess'
 
+/**
+ * @file Es la pagina de creacion de un nuevo foro
+ * @author SRPD
+ * @class
+ * @exports NewForo
+ */
 export default class NewForo extends Component {
 
+    /**
+     * @global
+     */
     state = {
         change: false
     }
 
+    /**
+     * @function checkText
+     * @param {String} text Obtiene el texto que se le pasara a la IA
+     * @returns {Boolean} False si el texto no contiene contenido abusivo, true si lo tiene
+     */
     checkText = async (text) => {
         var value = true
         await Axios.post(Global.servidor + "pruebaAPItext", { text: text.trim() })
@@ -30,10 +44,14 @@ export default class NewForo extends Component {
             .catch((err) => {
                 console.log(err);
             })
-        
-            return value
+
+        return value
     }
 
+    /**
+     * @function sendForo
+     * @param {JSON} data contenido a publicar como nuevo foro
+     */
     sendForo = (data) => {
         const headers = {
             authorization: `Bearer ${JWT.getJWT()}`
@@ -54,8 +72,15 @@ export default class NewForo extends Component {
             })
     }
 
+    /**
+     * @function submitTest
+     * @param {Event} e Trae la informacion del evento
+     */
     submitTest = async (e) => {
 
+        /**
+         * @constant <String> input
+         */
         const input = document.getElementById("tituloComment").value
 
         if (input.trim() === '') {
@@ -70,17 +95,33 @@ export default class NewForo extends Component {
                 },
             });
 
+            /**
+             * @constant <String> descripcion
+             * @constant <Element> img
+             * @constant <String> titulo
+             */
             const descripcion = e;
             const img = document.getElementById("btn_enviar");
             const titulo = document.getElementById("tituloComment").value;
 
+            /**
+             * @constant <Boolean> checkTittle
+             */
             const checkTittle = await this.checkText(titulo);
 
             if (!checkTittle) {
+
+                /**
+                 * @constant <Boolean> checkDescription
+                 */
                 const checkDescription = await this.checkText(descripcion)
 
                 if (!checkDescription) {
                     if (img.files[0]) {
+
+                        /**
+                         * @constant <FormData> formData
+                         */
                         const formData = new FormData();
 
                         formData.append(
@@ -88,12 +129,20 @@ export default class NewForo extends Component {
                             img.files[0],
                             img.files[0].name
                         )
+
+                        /**
+                         * @constant <JSON> headers
+                         */
                         const headers = {
                             authorization: `Bearer ${JWT.getJWT()}`
                         }
 
                         Axios.post(Global.servidor + "saveImageForo", formData, { headers })
                             .then((resp) => {
+
+                                /**
+                                 * @constant <JSON> headers
+                                 */
                                 const informationSend = {
                                     titulo,
                                     descripcion,
@@ -120,6 +169,9 @@ export default class NewForo extends Component {
                                 Swal.fire('Error al subir imagen', '', 'info');
                             })
                     } else {
+                        /**
+                         * @constant <JSON> headers
+                         */
                         const informationSend = {
                             titulo,
                             descripcion,
@@ -137,6 +189,10 @@ export default class NewForo extends Component {
 
     }
 
+    /**
+     * @function render
+     * @returns {HTML} Regresa la vista de la pagina de nuevo foro 
+     */
     render() {
 
         if (this.state.change) {

@@ -5,8 +5,18 @@ import Swal from 'sweetalert2';
 import Axios from 'axios'
 import Global from '../Global';
 
+/**
+ * @file Se encarga del proceso de recupercion de contreseña
+ * @author SRPD
+ * 
+ * @class
+ * @exports forgetPassword
+ */
 export default class forgetPassword extends Component {
 
+    /**
+     * @constructor
+     */
     constructor(props){
         super(props);
         this.validator = new SimpleReactValidator({
@@ -20,16 +30,26 @@ export default class forgetPassword extends Component {
         });
     }
 
+    /**
+     * @global
+     */
     state = {
         pass: '',
         confirmPass: '',
         redirect: false
     }
 
+    /**
+     * @function changePassword
+     * @param {JSON} e Captura el evento submit del formulario
+     */
     changePassword = (e) => {
         e.preventDefault()
 
+        /** @constant */
         const {id, type} = this.props.match.params
+
+        /** @constant */
         const {pass} = this.state
 
         Swal.fire({
@@ -43,6 +63,7 @@ export default class forgetPassword extends Component {
         if (this.confirmPassword() && this.validator.allValid()) {
             Axios.put(Global.servidor + 'changePassword/' + type, {id, password: pass})
                 .then((resp) => {
+                    /** @constant */
                     const {title, body, icon} = resp.data
                     Swal.fire(title, body, icon).then((resp)=>{
                         if (resp.value) {
@@ -59,14 +80,24 @@ export default class forgetPassword extends Component {
         }
     }
 
+    /**
+     * @function confirmPassword
+     * @returns {Boolean} Si pass y confirmPass son iguales retorna true, de lo contrario retorna false
+     */
     confirmPassword = () => {
 
+        /** @constant */
         const {pass, confirmPass} = this.state;
 
         return pass === confirmPass ? true : false
     }
 
+    /**
+     * @function setPass
+     * @param {String} e Contiene el nuevo valor del pass
+     */
     setPass = (e) => {
+        /** @constant */
         const {confirmPass} = this.state;
 
         this.setState({
@@ -75,7 +106,12 @@ export default class forgetPassword extends Component {
         })
     }
 
+    /**
+     * @function setConfirmPass
+     * @param {Strig} e Contiene el nuevo valor de confirmPass
+     */
     setConfirmPass = (e) => {
+        /** @constant */
         const {pass} = this.state;
 
         this.setState({
@@ -84,6 +120,10 @@ export default class forgetPassword extends Component {
         })
     }
 
+    /**
+     * @function render
+     * @returns {HTML} Retorna la vista de la pagina de cambio de contraseña
+     */
     render(){
 
         if (this.state.redirect) {

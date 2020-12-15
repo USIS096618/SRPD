@@ -8,25 +8,46 @@ import Image from '../Assets/Images/svg/iconImage.svg'
 import JWT from '../Class/JWT'
 import Identificador from '../Class/Identificador'
 import Swal from 'sweetalert2'
-
+/**
+ * @file Se encarga de mostrar la vista de la pagina de los comentarios del foro.
+ * @author SRPD
+ * 
+ * @class
+ * @exports ForoComment
+ */
 export default class ForoComment extends Component {
 
+    /**
+     * @constructor
+     */
     constructor(props) {
         super(props)
         this.connectSocket = Global.ConnectChat
     }
 
+    /**
+     * @global
+     */
     dataMensaje = React.createRef();
 
+    /** @global */
     state = {
         informacion: null,
         comentarios: null
     }
 
+    /**
+     * @function fileChange
+     * @param {JSON} event Trae la nueva imagen a enviar
+     * 
+     */
     fileChange = (event) => {
 
         const file = event.target.files[0];
 
+        /**
+         * @constant
+         */
         const formData = new FormData();
 
         formData.append(
@@ -35,6 +56,9 @@ export default class ForoComment extends Component {
             file.name
         )
 
+        /**
+         * @constant
+         */
         const headers = {
             authorization: `Bearer ${JWT.getJWT()}`
         }
@@ -42,6 +66,9 @@ export default class ForoComment extends Component {
         Axios.post(Global.servidor + "saveImageForoComment", formData, { headers })
             .then((resp) => {
                 var id = this.props.match.params.id;
+                /**
+                 * @constant
+                 */
                 const data = {
                     info: {
                         message: '',
@@ -73,11 +100,19 @@ export default class ForoComment extends Component {
 
     }
 
+    /**
+     * @function sendMessage
+     * @param {JSON} e Contiene la tecla que el usuario a tecleado
+     */
     sendMessage = async (e) => {
 
 
         if (e.key === "Enter" && this.dataMensaje.current.value.trim() !== '') {
             var id = this.props.match.params.id;
+
+            /**
+             * @constant
+             */
             const data = {
                 info: {
                     message: this.dataMensaje.current.value,
@@ -89,6 +124,9 @@ export default class ForoComment extends Component {
 
             await Axios.post(Global.servidor + "pruebaAPItext", { text: data.info.message.trim() })
                 .then((resp) => {
+                    /**
+                     * @constant
+                     */
                     const api = resp.data
 
                     if (!api.profanity) {
@@ -108,7 +146,14 @@ export default class ForoComment extends Component {
         }
     }
 
+    /**
+     * @function getForo
+     */
     getForo = () => {
+
+        /**
+         * @constant
+         */
         const headers = {
             authorization: `Bearer ${JWT.getJWT()}`
         }
@@ -125,10 +170,19 @@ export default class ForoComment extends Component {
             })
     }
 
+    /**
+     * Busca los comentarios mediante socket
+     * @function searchComment
+     */
     searchComment = () => {
         this.connectSocket.emit("requestComment", this.props.match.params.id)
     }
 
+    /**
+     * Se activa cuado el componente se monta
+     * @function UNSAFE_componentWillMount
+     * 
+     */
     UNSAFE_componentWillMount() {
         this.getForo()
         this.searchComment()
@@ -147,6 +201,10 @@ export default class ForoComment extends Component {
 
     }
 
+    /**
+     * @function render
+     * @returns {HTML} Retorna la vista de la pagina de Foro comentarios
+     */
     render() {
         var data;
         this.state.informacion != null ? data = this.state.informacion[0] : data = null;

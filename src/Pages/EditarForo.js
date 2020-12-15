@@ -7,14 +7,32 @@ import HeaderComponent from '../Components/Header'
 import { Redirect } from 'react-router-dom'
 import JWT from '../Class/JWT'
 
+/**
+ * @file Se encarga de los procesos de editar foro
+ * @author SRPD
+ * 
+ * @class
+ * @exports NewForo
+ */
 export default class NewForo extends Component {
 
+    /**
+     * @global
+     */
     state = {
         informacion: null,
         redirect: false
     }
 
+    /**
+     * @function sendForo
+     * @param {JSON} data Contiene toda la informacion editada para guardar
+     */
     sendForo = (data) => {
+
+        /**
+         * @constant
+         */
         const headers = {
             authorization: `Bearer ${JWT.getJWT()}`
         }
@@ -35,10 +53,16 @@ export default class NewForo extends Component {
             })
     }
 
+    /**
+     * @function checkText
+     * @param {String} text Contiene el texto a procesar para la revision de comportamiento abusivo
+     * @returns {Boolean} Regresa true si el contenido es abusivo de lo contrario, retornara false
+     */
     checkText = async (text) => {
         var value = true
         await Axios.post(Global.servidor + "pruebaAPItext", { text: text.trim() })
             .then((resp) => {
+                /** @constant */
                 const api = resp.data
 
                 if (!api.profanity) {
@@ -54,8 +78,13 @@ export default class NewForo extends Component {
         return value
     }
 
+    /**
+     * @function submitTest
+     * @param {String} e Contiene el contenido del body
+     */
     submitTest = async (e) => {
 
+        /** @constant */
         const input = document.getElementById("tituloComment").value
 
         if (input.trim() === '') {
@@ -70,23 +99,29 @@ export default class NewForo extends Component {
                 },
             });
 
+            /** @constant */
             const descripcion = e;
+            /** @constant */
             const img = document.getElementById("btn_enviar");
+            /** @constant */
             const titulo = document.getElementById("tituloComment").value;
-
+            /** @constant */
             const checkTittle = await this.checkText(titulo);
 
             if (!checkTittle) {
+                /** @constant */
                 const checkDescription = await this.checkText(descripcion)
 
                 if (!checkDescription) {
 
                     if (img.files[0]) {
 
+                        /** @constant */
                         const headers = {
                             authorization: `Bearer ${JWT.getJWT()}`
                         }
 
+                        /** @constant */
                         const formData = new FormData();
 
                         formData.append(
@@ -97,6 +132,9 @@ export default class NewForo extends Component {
 
                         Axios.post(Global.servidor + "saveImageForo", formData, { headers })
                             .then((resp) => {
+                                /**
+                                 * @constant
+                                 */
                                 const informationSend = {
                                     id: this.state.informacion._id,
                                     data: {
@@ -124,6 +162,7 @@ export default class NewForo extends Component {
                                 Swal.fire('Error al subir imagen', '', 'info');
                             })
                     } else {
+                        /** @constant */
                         const informationSend = {
                             id: this.state.informacion._id,
                             data: {
@@ -142,7 +181,11 @@ export default class NewForo extends Component {
         }
     }
 
+    /**
+     * @function getForo
+     */
     getForo = () => {
+        /** @constant */
         const headers = {
             authorization: `Bearer ${JWT.getJWT()}`
         }
@@ -164,10 +207,18 @@ export default class NewForo extends Component {
             })
     }
 
+    /**
+     * Se ejecuta cuando el componente a sido montado
+     * @function UNSAFE_componentWillMount
+     */
     UNSAFE_componentWillMount() {
         this.getForo()
     }
 
+    /**
+     * @function render
+     * @returns {HTML} Retorna la vista de la pagina de Editar foro
+     */
     render() {
 
         if (this.state.redirect) {

@@ -7,8 +7,18 @@ import Global from '../Global'
 import Moment from 'moment'
 import JWT from '../Class/JWT'
 
+/**
+ * @file Se encarga de todo lo que tenga que ver con el buscador
+ * @author SRPD
+ * 
+ * @class
+ * @exports Buscador
+ */
 export default class Buscador extends Component {
 
+    /**
+     * @global
+     */
     state = {
         Datos: {
             recopilados: null,
@@ -16,8 +26,13 @@ export default class Buscador extends Component {
         }
     }
 
+    /**
+     * Se obtienen el array de docentes
+     * @function getDocentes
+     */
     getDocentes = () => {
         
+        /** @constant */
         const headers = {
             authorization: `Bearer ${JWT.getJWT()}`
         } 
@@ -37,15 +52,26 @@ export default class Buscador extends Component {
 
     }
 
+    /**
+     * @function searchDocentes
+     * @param {JSON} event Obtiene la informacion a buscar
+     */
     searchDocentes = (event) => {
         
+        /** @constant */
         const ArrayFilter = this.state.Datos.recopilados.filter((val, i) => {
             
+            /** @constant */
             const Nombre =  val.Nombre.toLowerCase()
+            /** @constant */
             const FechaNac = (Moment().diff(val.FechaNac, 'years')).toString()
+            /** @constant */
             const Carrera = val.Academica.Carrera.toLowerCase()
+            /** @constant */
             const Categoria = val.Academica.CategoriaDocente.toLowerCase()
+            /** @constant */
             const Egreso = (Moment(val.Academica.Egreso).add(1, "days").format('L')).toString()
+            /** @constant */
             const Nivel = val.Academica.NivelDocente.toLowerCase()
 
             event.Egreso = event.Egreso !== "fecha invalida" ? event.Egreso : ''
@@ -67,14 +93,26 @@ export default class Buscador extends Component {
 
     }
 
+    /**
+     * @function delete
+     * @param {String} e activa la funcion delete
+     */
     delete = (e) => {
         this.getDocentes()
     }
 
+    /**
+     * Se ejecuta cuando el componente es montado
+     * @function UNSAFE_componentWillMount
+     */
     UNSAFE_componentWillMount(){
         this.getDocentes();
     }
 
+    /**
+     * @function render
+     * @returns {HTML} Regresa la vista de la pagina del buscador
+     */
     render() {
         return (
             <Fragment>

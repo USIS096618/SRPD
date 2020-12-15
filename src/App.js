@@ -35,8 +35,17 @@ import PageConfiguracionAdmin from './Pages/Help/Administracion/PageConfiguracio
 import PageInformacionAdmin from './Pages/Help/Administracion/PageInformacionAdmin';
 import PageDownloadAdmin from './Pages/Help/Administracion/PageDownloadAdmin';
 
+/**
+ * @file Este es el nucleo de la aplicacion, es el que se encarga de generar todas las rutas
+ * @author SRPD
+ * @class
+ */
 class App extends Component {
 
+  /**
+   * @function render Se encarga de entregar un documento html
+   * @returns {html} Me regresa mi componente App con todas las rutas cargadas
+   */
   render(){
 
     return (
@@ -100,4 +109,7 @@ class App extends Component {
   }
 }
 
+/**
+ * @exports App
+ */
 export default App;

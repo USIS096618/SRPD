@@ -3,10 +3,22 @@ import Axios from 'axios'
 import Global from '../Global'
 import Swal from 'sweetalert2'
 
+/**
+ * @file Es la pagina de recuperacion de contraseña
+ * @author SRPD
+ * @function RecuperarCuenta
+ * @return {HTML} Regresa la vista de la pagina de recuperacion de contraseña
+ */
 const RecuperarCuenta = () => {
-
+    /**
+     * @global
+     */
     const [Usuario, setUsuario] = useState('')
 
+    /**
+     * @function sendUsuario
+     * @param {Event} e Obtiene el evento submit del formulario
+     */
     const sendUsuario = (e) => {
         e.preventDefault()
         Swal.fire({

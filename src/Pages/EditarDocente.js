@@ -13,15 +13,30 @@ import JWT from '../Class/JWT'
 import Identificador from '../Class/Identificador'
 import NotAccess from '../Components/NotAccess'
 
+/**
+ * @file Este se encarga de hacer todo lo referente con la pagina de Editar Docente
+ * @author SRPD
+ * 
+ * @class
+ * @exports EditarDocente
+ */
 export default class EditarDocente extends Component {
 
+    /**
+     * @global
+     */
     state = {
         status: 'cargando',
         data: [],
         show: "General"
     }
 
+    /**
+     * @function changeShow
+     * @param {String} e Contiene el contenido a mostrar
+     */
     changeShow = (e) => {
+        /** @constant */
         const {status, data} = this.state;
 
         this.setState({
@@ -31,9 +46,15 @@ export default class EditarDocente extends Component {
         })
     }
     
+    /**
+     * Se ejecuta cuando el componente se monta
+     * @function UNSAFE_componentWillMount
+     */
     UNSAFE_componentWillMount(){
+        /** @constant */
         const id = this.props.match.params.id;
 
+        /** @constant */
         const headers = {
             authorization: `Bearer ${JWT.getJWT()}`
         }
@@ -51,6 +72,10 @@ export default class EditarDocente extends Component {
             })
     }
 
+    /**
+     * @function render
+     * @returns {HTML} Retorna la vista de la pagina de editar docentes
+     */
     render(){
 
         var show = <label></label>

@@ -7,8 +7,15 @@ import HeaderComponent from '../Components/Header'
 import JWT from '../Class/JWT'
 import Identificador from '../Class/Identificador'
 
+/**
+ * @file Se encarga de cargar la vista del Foro
+ * @author SRPD
+ * @class
+ * @exports Foro
+ */
 export default class Foro extends Component {
 
+    /** @global */
     state = {
         Datos: {
             recopilados: null,
@@ -16,12 +23,22 @@ export default class Foro extends Component {
         }
     }
 
+    /**
+     * @function update
+     * @param {JSON} event Verifica que se debe realizar una actualizacion
+     */
     update = (event) => {
         this.getForo()
     }
 
+    /**
+     * @function getForo
+     */
     getForo = () => {
         
+        /**
+         * @global
+         */
         const headers = {
             authorization: `Bearer ${JWT.getJWT()}`
         } 
@@ -41,10 +58,18 @@ export default class Foro extends Component {
 
     }
 
+    /**
+     * Se ejecuta cuando el componente a sido montado
+     * @function UNSAFE_componentWillMount
+     */
     UNSAFE_componentWillMount(){
         this.getForo();
     }
 
+    /**
+     * @function render
+     * @returns {HTML} Carga la vista de la pagina de Foro
+     */
     render(){
         return (
             <Fragment>
