@@ -2,27 +2,10 @@
 _Sistema De Registro Profecional Docente_
 
 ### Pre-requisitos 📋
-_navegador web internet equipo sistema operativo linux wimdows o mac_
+_navegador web(preferencia Chrome) internet equipo sistema operativo linux wimdows o mac_
 
 ### Instalación 🔧
-_Una serie de ejemplos paso a paso que te dice lo que debes ejecutar para tener un entorno de desarrollo ejecutandose_
-_descargar doxygen ejecutar el instalador aceptar los terminos de licencia elegir una ruta donde se instalara dar opcion siguiente intalar y cerrar_
-
-
-_Finaliza con un ejemplo de cómo obtener datos del sistema o como usarlos para una pequeña demo_
-## Ejecutando las pruebas ⚙️
-_Explica como ejecutar las pruebas automatizadas para este sistema_
-
-### Analice las pruebas end-to-end 🔩
-_Explica que verifican estas pruebas y por qué_
-```
-Da un ejemplo
-```
-### Y las pruebas de estilo de codificación ⌨️
-_Explica que verifican estas pruebas y por qué_
-```
-Da un ejemplo
-```
+_El navegador le preguntara si desea instalar esta aplicacion al escritorio(en caso de ser movil instalarse en el dispositivo), darle instalar y listo._
 
 ## Despliegue 📦
 _Agrega notas adicionales sobre como hacer deploy_
