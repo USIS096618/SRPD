@@ -2,7 +2,7 @@ import React from 'react';
 
 const HomeAdmin = () => {
 
-    return <div>Home the Administrador</div>
+    return <div></div>
 }
 
 export default HomeAdmin;

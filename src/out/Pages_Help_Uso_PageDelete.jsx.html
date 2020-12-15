@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Pages/Help/Uso/PageDelete.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Pages/Help/Uso/PageDelete.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react';
+import MenuJoinComponent from '../../../Components/Help/MenuJoinComponent';
+import DeleteForo from '../../../Components/Help/Uso/DeleteForo';
+import Ayuda from '../../../JSON/Ayuda.json';
+
+/**
+ * @file Este archivo se encarga de montar los componentes para la pagina de ayuda - Eliminar foro
+ * @author SRPD
+ * @function PageDeleteForo
+ * @returns {HTML} Retorna la vista de la pagina ayuda - Eliminar foro
+ */
+const PageDeleteForo = () => {
+
+    return ( &lt;MenuJoinComponent Ayuda={Ayuda.uso} component={&lt;DeleteForo />}/> )
+}
+
+export default PageDeleteForo;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Auth.html">Auth</a></li><li><a href="module-getIdentificador.html">getIdentificador</a></li><li><a href="module-getJWT.html">getJWT</a></li><li><a href="module-getPosition.html">getPosition</a></li><li><a href="module-getSubscription.html">getSubscription</a></li><li><a href="module-Home.html">Home</a></li><li><a href="module-Identificador.html">Identificador</a></li><li><a href="module-JWT.html">JWT</a></li><li><a href="module-ProtectedRoute.html">ProtectedRoute</a></li><li><a href="module-Push.html">Push</a></li><li><a href="module-send.html">send</a></li><li><a href="module-validatorIdentificador.html">validatorIdentificador</a></li><li><a href="Pages_Bandeja.module_js.html">Pages/Bandeja.js</a></li><li><a href="Pages_Buscador.module_js.html">Pages/Buscador.js</a></li><li><a href="Pages_EditarDocente.module_js.html">Pages/EditarDocente.js</a></li><li><a href="Pages_EditarForo.module_js.html">Pages/EditarForo.js</a></li><li><a href="Pages_forgetPassword.module_js.html">Pages/forgetPassword.js</a></li><li><a href="Pages_Foro.module_js.html">Pages/Foro.js</a></li><li><a href="Pages_ForoComment.module_js.html">Pages/ForoComment.js</a></li><li><a href="Pages_NuevoForo.module_js.html">Pages/NuevoForo.js</a></li><li><a href="Pages_Registro.module_js.html">Pages/Registro.js</a></li></ul><h3>Classes</h3><ul><li><a href="Auth.html">Auth</a></li><li><a href="auth.js.html">auth.js</a></li><li><a href="Identificador.html">Identificador</a></li><li><a href="JWT.html">JWT</a></li><li><a href="Pages_Bandeja.module_js.html">js</a></li><li><a href="Pages_forgetPassword.module_js.html">js</a></li><li><a href="Pages_ForoComment.module_js.html">js</a></li><li><a href="Pages_Login.js.html">Pages/Login.js</a></li><li><a href="Push.html">Push</a></li></ul><h3>Global</h3><ul><li><a href="global.html#%253CJSON%253E"><JSON></a></li><li><a href="global.html#CambiarState">CambiarState</a></li><li><a href="global.html#clearIdentificador">clearIdentificador</a></li><li><a href="global.html#clearJWT">clearJWT</a></li><li><a href="global.html#dataMensaje">dataMensaje</a></li><li><a href="global.html#Error404">Error404</a></li><li><a href="global.html#headers">headers</a></li><li><a href="global.html#Help">Help</a></li><li><a href="global.html#isAuthenticated">isAuthenticated</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#PageBandeja">PageBandeja</a></li><li><a href="global.html#PageBandejaImage">PageBandejaImage</a></li><li><a href="global.html#PageBandejaMensaje">PageBandejaMensaje</a></li><li><a href="global.html#PageCambioPassAdmin">PageCambioPassAdmin</a></li><li><a href="global.html#PageCommentForo">PageCommentForo</a></li><li><a href="global.html#PageConfiguracionAdmin">PageConfiguracionAdmin</a></li><li><a href="global.html#PageCrearCuenta">PageCrearCuenta</a></li><li><a href="global.html#PageDeleteForo">PageDeleteForo</a></li><li><a href="global.html#PageDownloadAdmin">PageDownloadAdmin</a></li><li><a href="global.html#PageEditForo">PageEditForo</a></li><li><a href="global.html#PageForo">PageForo</a></li><li><a href="global.html#PageHomeAdmin">PageHomeAdmin</a></li><li><a href="global.html#PageHomeUso">PageHomeUso</a></li><li><a href="global.html#PageInformacionAdmin">PageInformacionAdmin</a></li><li><a href="global.html#PageMiInicio">PageMiInicio</a></li><li><a href="global.html#PageNewForo">PageNewForo</a></li><li><a href="global.html#PageSesionAdmin">PageSesionAdmin</a></li><li><a href="global.html#RecuperarCuenta">RecuperarCuenta</a></li><li><a href="global.html#sendUsuario">sendUsuario</a></li><li><a href="global.html#setIdentificador">setIdentificador</a></li><li><a href="global.html#setJWT">setJWT</a></li><li><a href="global.html#state">state</a></li><li><a href="global.html#validatorJWT">validatorJWT</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Dec 15 2020 00:19:40 GMT-0600 (hora estándar central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

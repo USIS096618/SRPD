@@ -71,9 +71,6 @@ const RightNavHelp = ({ open }) => {
         <NavLink to="/Ayuda_/Administrar" activeClassName="active-route">Administra tu cuenta</NavLink>
       </li>
       <li>
-        <NavLink to="/Ayuda_/Politica_Reportes" activeClassName="active-route">Politica y Reportes</NavLink>
-      </li>
-      <li>
         <NavLink to="/" >Inicia Sesion</NavLink>
       </li>
     </Ul>

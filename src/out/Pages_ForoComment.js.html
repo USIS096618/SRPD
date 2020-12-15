@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Pages/ForoComment.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Pages/ForoComment.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { Component, Fragment } from 'react'
+import HeaderComponent from '../Components/Header'
+import Axios from 'axios'
+import Global from '../Global'
+import Moment from 'moment'
+import ForoChatComment from '../Components/ForoChatComment'
+import Image from '../Assets/Images/svg/iconImage.svg'
+import JWT from '../Class/JWT'
+import Identificador from '../Class/Identificador'
+import Swal from 'sweetalert2'
+/**
+ * @file Se encarga de mostrar la vista de la pagina de los comentarios del foro.
+ * @author SRPD
+ * 
+ * @class
+ * @exports ForoComment
+ */
+export default class ForoComment extends Component {
+
+    /**
+     * @constructor
+     */
+    constructor(props) {
+        super(props)
+        this.connectSocket = Global.ConnectChat
+    }
+
+    /**
+     * @global
+     */
+    dataMensaje = React.createRef();
+
+    /** @global */
+    state = {
+        informacion: null,
+        comentarios: null
+    }
+
+    /**
+     * @function fileChange
+     * @param {JSON} event Trae la nueva imagen a enviar
+     * 
+     */
+    fileChange = (event) => {
+
+        const file = event.target.files[0];
+
+        /**
+         * @constant
+         */
+        const formData = new FormData();
+
+        formData.append(
+            'file0',
+            file,
+            file.name
+        )
+
+        /**
+         * @constant
+         */
+        const headers = {
+            authorization: `Bearer ${JWT.getJWT()}`
+        }
+
+        Axios.post(Global.servidor + "saveImageForoComment", formData, { headers })
+            .then((resp) => {
+                var id = this.props.match.params.id;
+                /**
+                 * @constant
+                 */
+                const data = {
+                    info: {
+                        message: '',
+                        foto: resp.data.image,
+                        idDocente: Identificador.getIdentificador()
+                    },
+                    id
+                };
+
+                Axios.post(Global.servidor + "pruebaAPI", { url: data.info.foto }).then((resp) => {
+
+                    if (resp.data.profanity || resp.data.nudity) {
+                        Swal.fire('', resp.data.message, 'error')
+
+                    }
+                    else {
+
+                        this.connectSocket.emit("sendComment", data);
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                })
+
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+
+
+    }
+
+    /**
+     * @function sendMessage
+     * @param {JSON} e Contiene la tecla que el usuario a tecleado
+     */
+    sendMessage = async (e) => {
+
+
+        if (e.key === "Enter" &amp;&amp; this.dataMensaje.current.value.trim() !== '') {
+            var id = this.props.match.params.id;
+
+            /**
+             * @constant
+             */
+            const data = {
+                info: {
+                    message: this.dataMensaje.current.value,
+                    foto: null,
+                    idDocente: Identificador.getIdentificador()
+                },
+                id
+            };
+
+            await Axios.post(Global.servidor + "pruebaAPItext", { text: data.info.message.trim() })
+                .then((resp) => {
+                    /**
+                     * @constant
+                     */
+                    const api = resp.data
+
+                    if (!api.profanity) {
+
+                        this.connectSocket.emit("sendComment", data);
+
+                        this.dataMensaje.current.value = ""
+
+                    } else {
+                        Swal.fire('Contenido de Agresion', api.text, 'error')
+                    }
+                })
+                .catch((err) => {
+
+                })
+
+        }
+    }
+
+    /**
+     * @function getForo
+     */
+    getForo = () => {
+
+        /**
+         * @constant
+         */
+        const headers = {
+            authorization: `Bearer ${JWT.getJWT()}`
+        }
+        Axios.get(Global.servidor + "getForo/" + this.props.match.params.id, { headers })
+            .then((resp) => {
+                this.setState({
+                    informacion: resp.data.Foros,
+                    comentarios: this.state.comentarios
+                })
+
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
+    /**
+     * Busca los comentarios mediante socket
+     * @function searchComment
+     */
+    searchComment = () => {
+        this.connectSocket.emit("requestComment", this.props.match.params.id)
+    }
+
+    /**
+     * Se activa cuado el componente se monta
+     * @function UNSAFE_componentWillMount
+     * 
+     */
+    UNSAFE_componentWillMount() {
+        this.getForo()
+        this.searchComment()
+        this.connectSocket.on("recivedComment", (data) => {
+
+            this.setState({
+                informacion: this.state.informacion,
+                comentarios: data
+            })
+
+        })
+
+        this.connectSocket.on("searchCMT", (data) => {
+            this.searchComment()
+        })
+
+    }
+
+    /**
+     * @function render
+     * @returns {HTML} Retorna la vista de la pagina de Foro comentarios
+     */
+    render() {
+        var data;
+        this.state.informacion != null ? data = this.state.informacion[0] : data = null;
+
+        var Comentarios = null;
+        if (this.state.comentarios !== null) {
+            Comentarios = this.state.comentarios.map((value, i) => {
+                return &lt;ForoChatComment data={value} key={i}>&lt;/ForoChatComment>
+            })
+        }
+        else {
+            Comentarios = &lt;label>&lt;/label>
+        }
+
+        return (
+            &lt;Fragment>
+                &lt;HeaderComponent>&lt;/HeaderComponent>
+
+                {
+                    data !== null ? (
+                        &lt;div className="main-container-Foro">
+                            &lt;div className="Publish-Foro">
+                                &lt;div className="title">
+                                    &lt;div className="Tarjeta-Usuario">
+
+                                        &lt;img className="circle-img Tarjeta-circle-image" src={data.PerfilImage[0]} alt={data.Nombre[0]} />
+                                        &lt;div className="Tarjeta-Publish">
+                                            &lt;h2>{data.Nombre[0]}&lt;/h2>
+                                            &lt;label>{Moment(data.datePublish).fromNow(Date.now)}&lt;/label>
+                                        &lt;/div>
+                                    &lt;/div>
+                                &lt;/div>
+                                &lt;div className="Foro-Data">
+                                    &lt;div className="Tarjeta-Info">
+                                        &lt;div className="Tarjeta-Name">
+                                            &lt;h2>&lt;u>{data.titulo}&lt;/u>&lt;/h2>
+                                        &lt;/div>
+                                        &lt;div className="Tarjeta-Description" dangerouslySetInnerHTML={{ __html: data.descripcion }}>
+
+                                        &lt;/div>
+                                        {
+                                            data.imagen !== null &amp;&amp;
+                                            &lt;div className="Tarjeta-Image-Foro">
+                                                &lt;img src={data.imagen} alt={data.titulo}>&lt;/img>
+                                            &lt;/div>
+                                        }
+
+                                    &lt;/div>
+                                &lt;/div>
+                            &lt;/div>
+                            &lt;div className="chat-Foro">
+                                &lt;div className="title">
+                                    &lt;label>Comentarios&lt;/label>
+                                &lt;/div>
+                                &lt;div className="messages-list">
+                                    {Comentarios}
+                                &lt;/div>
+
+                                {
+                                    Identificador.validatorIdentificador() &amp;&amp;
+                                    &lt;div className="input-container">
+                                        &lt;div id="div_file">
+                                            &lt;img id="texto" src={Image} alt="icono" />
+                                            &lt;input type="file" id="btn_enviar" accept="image/*" onChange={this.fileChange} />
+                                        &lt;/div>
+                                        &lt;input className="msg-input" type="text" placeholder="Escribe un mensaje" ref={this.dataMensaje} onKeyPress={this.sendMessage} />
+                                    &lt;/div>
+                                }
+
+                            &lt;/div>
+                        &lt;/div>
+                    ) : (
+                            &lt;label>Cargando...&lt;/label>
+                        )
+                }
+            &lt;/Fragment>
+        )
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Auth.html">Auth</a></li><li><a href="module-getIdentificador.html">getIdentificador</a></li><li><a href="module-getJWT.html">getJWT</a></li><li><a href="module-getPosition.html">getPosition</a></li><li><a href="module-getSubscription.html">getSubscription</a></li><li><a href="module-Home.html">Home</a></li><li><a href="module-Identificador.html">Identificador</a></li><li><a href="module-JWT.html">JWT</a></li><li><a href="module-ProtectedRoute.html">ProtectedRoute</a></li><li><a href="module-Push.html">Push</a></li><li><a href="module-send.html">send</a></li><li><a href="module-validatorIdentificador.html">validatorIdentificador</a></li><li><a href="Pages_Bandeja.module_js.html">Pages/Bandeja.js</a></li><li><a href="Pages_Buscador.module_js.html">Pages/Buscador.js</a></li><li><a href="Pages_EditarDocente.module_js.html">Pages/EditarDocente.js</a></li><li><a href="Pages_EditarForo.module_js.html">Pages/EditarForo.js</a></li><li><a href="Pages_forgetPassword.module_js.html">Pages/forgetPassword.js</a></li><li><a href="Pages_Foro.module_js.html">Pages/Foro.js</a></li><li><a href="Pages_ForoComment.module_js.html">Pages/ForoComment.js</a></li><li><a href="Pages_NuevoForo.module_js.html">Pages/NuevoForo.js</a></li><li><a href="Pages_Registro.module_js.html">Pages/Registro.js</a></li></ul><h3>Classes</h3><ul><li><a href="Auth.html">Auth</a></li><li><a href="auth.js.html">auth.js</a></li><li><a href="Identificador.html">Identificador</a></li><li><a href="JWT.html">JWT</a></li><li><a href="Pages_Bandeja.module_js.html">js</a></li><li><a href="Pages_forgetPassword.module_js.html">js</a></li><li><a href="Pages_ForoComment.module_js.html">js</a></li><li><a href="Pages_Login.js.html">Pages/Login.js</a></li><li><a href="Push.html">Push</a></li></ul><h3>Global</h3><ul><li><a href="global.html#%253CJSON%253E"><JSON></a></li><li><a href="global.html#CambiarState">CambiarState</a></li><li><a href="global.html#clearIdentificador">clearIdentificador</a></li><li><a href="global.html#clearJWT">clearJWT</a></li><li><a href="global.html#dataMensaje">dataMensaje</a></li><li><a href="global.html#Error404">Error404</a></li><li><a href="global.html#headers">headers</a></li><li><a href="global.html#Help">Help</a></li><li><a href="global.html#isAuthenticated">isAuthenticated</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#PageBandeja">PageBandeja</a></li><li><a href="global.html#PageBandejaImage">PageBandejaImage</a></li><li><a href="global.html#PageBandejaMensaje">PageBandejaMensaje</a></li><li><a href="global.html#PageCambioPassAdmin">PageCambioPassAdmin</a></li><li><a href="global.html#PageCommentForo">PageCommentForo</a></li><li><a href="global.html#PageConfiguracionAdmin">PageConfiguracionAdmin</a></li><li><a href="global.html#PageCrearCuenta">PageCrearCuenta</a></li><li><a href="global.html#PageDeleteForo">PageDeleteForo</a></li><li><a href="global.html#PageDownloadAdmin">PageDownloadAdmin</a></li><li><a href="global.html#PageEditForo">PageEditForo</a></li><li><a href="global.html#PageForo">PageForo</a></li><li><a href="global.html#PageHomeAdmin">PageHomeAdmin</a></li><li><a href="global.html#PageHomeUso">PageHomeUso</a></li><li><a href="global.html#PageInformacionAdmin">PageInformacionAdmin</a></li><li><a href="global.html#PageMiInicio">PageMiInicio</a></li><li><a href="global.html#PageNewForo">PageNewForo</a></li><li><a href="global.html#PageSesionAdmin">PageSesionAdmin</a></li><li><a href="global.html#RecuperarCuenta">RecuperarCuenta</a></li><li><a href="global.html#sendUsuario">sendUsuario</a></li><li><a href="global.html#setIdentificador">setIdentificador</a></li><li><a href="global.html#setJWT">setJWT</a></li><li><a href="global.html#state">state</a></li><li><a href="global.html#validatorJWT">validatorJWT</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Dec 15 2020 00:19:40 GMT-0600 (hora estándar central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

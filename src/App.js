@@ -91,13 +91,6 @@ class App extends Component {
               <Route exact path="/Ayuda_/Administrar/Informacion" component={PageInformacionAdmin} />
               <Route exact path="/Ayuda_/Administrar/Descargar_Informacion" component={PageDownloadAdmin} />
 
-                {/* Rutas de Politica y Reportes SRPD */}
-              <Route exact path="/Ayuda_/Politica_Reportes" component={Help} />
-              <Route exact path="/Ayuda_/Politica_Reportes/Reportar" component={Help} />
-              <Route exact path="/Ayuda_/Politica_Reportes/Reportar_Sin_Cuenta" component={Help} />
-              <Route exact path="/Ayuda_/Politica_Reportes/No_Permitido" component={Help} />
-              <Route exact path="/Ayuda_/Politica_Reportes/Comportamiento" component={Help} />
-
               {/* Ruta de error 404 */}
               <Route exact path="**" component={Error404} />
             </Switch>

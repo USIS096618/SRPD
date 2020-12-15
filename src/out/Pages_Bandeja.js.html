@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Pages/Bandeja.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Pages/Bandeja.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, {Component, Fragment} from 'react'
+import User from '../Components/Chat/User'
+import ChatColumn from '../Components/Chat/ChatColumn'
+import Axios from 'axios'
+import Global from '../Global'
+import HeaderComponent from '../Components/Header'
+import JWT from '../Class/JWT'
+import Identificador from '../Class/Identificador'
+
+/**
+ * @file Este archivo contiene todo lo referente con la pagina de Bandeja
+ * @author SRPD
+ * 
+ * @class
+ * @exports Bandeja
+ */
+export default class Bandeja extends Component {
+
+    /**
+     * @constructor
+     */
+    constructor(props){
+        super(props)
+        this.connectSocket = Global.ConnectChat
+    }
+
+    /**
+     * @global
+     */
+    state = {
+        Docentes: {
+            recopilados: null,
+            mostrar: null
+        },
+        Docente: null
+    }
+
+    search = React.createRef();
+
+    /**
+     * @function getDocentes
+     */
+    getDocentes = () => {
+        
+        /** @constant */
+        const headers = {
+            authorization: `Bearer ${JWT.getJWT()}`
+        } 
+
+        Axios.get(Global.servidor + 'getDocentes/desc', { headers})
+            .then((response) => {
+                this.setState({
+                    Docentes: {
+                        recopilados: response.data.Docentes,
+                        mostrar: response.data.Docentes
+                    },
+                    Docente: this.state.Docente
+                })
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
+    }
+
+    /**
+     * @function docenteSelection
+     * @param {JSON} event Contiene el docente seleccionado para el chat
+     */
+    docenteSelection = (event) => {
+        this.setState({
+            Docentes: this.state.Docentes,
+            Docente: event
+        })
+    }
+
+    /**
+     * @function searchDocentes
+     * @param {JSON} event Contiene la tecla que a presionado el usuario
+     */
+    searchDocentes = (event) => {
+        if (event.key === "Enter") {
+
+            /**
+             * @constant
+             */
+            const NombreSearch = this.search.current.value.toLowerCase();
+
+            /**
+             * @constant
+             */
+            const ArrayFilter = this.state.Docentes.recopilados.filter((val, i) => {
+
+                /** @constant */
+                const Nombre =  val.Nombre.toLowerCase()
+                
+                if (Nombre.indexOf(NombreSearch) !== -1 ) {
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            });
+            
+            this.setState({
+                Docentes: {
+                    recopilados: this.state.Docentes.recopilados,
+                    mostrar: ArrayFilter
+                },
+                Docente: this.state.Docente
+            });
+        }
+        
+    }
+
+    /**
+     * Esta funcion se ejecuta cuando el componente es montado
+     * @function UNSAFE_componentWillMount
+     */
+    UNSAFE_componentWillMount(){
+        this.getDocentes()
+
+
+    }
+
+    /**
+     * Esta funcion se ejecuta cuando el componente se a terminado de montar
+     * @function componentDidMount
+     */
+    componentDidMount(){
+        this.connectSocket.on("searchMSG", (data) => {
+            this.getDocentes();
+        })
+    }
+
+    /**
+     * @function render
+     * @returns {HTML} Retorna la vista de la pagina de bandeja
+     */
+    render(){
+        var docentes = null;
+        if (this.state.Docentes.mostrar !== null &amp;&amp; this.state.Docentes.mostrar !== undefined) {
+            docentes = this.state.Docentes.mostrar.map((value, i) => {
+                return &lt;User docente={value} docenteSelection={this.docenteSelection} key={i}>&lt;/User>
+            })
+        }
+        else{
+            docentes = &lt;label>&lt;/label>
+        }
+        return (
+            &lt;Fragment>
+                &lt;HeaderComponent>&lt;/HeaderComponent>
+                &lt;div className="main-container">
+
+                    {
+                        !Identificador.validatorIdentificador() &amp;&amp;
+                        &lt;div className="users-column">
+                            &lt;div className="title">
+                                &lt;div className="search-container">
+                                    &lt;i className="fas fa-search">&lt;/i>
+                                    &lt;input type="text" className="input-search" placeholder="Buscar...." ref={this.search} onKeyPress={this.searchDocentes}/>
+                                &lt;/div>
+                            &lt;/div>
+                            &lt;div className="users">
+                                {docentes}
+                                
+                            &lt;/div>
+                        &lt;/div>
+                    }
+                    
+                    &lt;div className="chat-column">
+                        &lt;ChatColumn salaChat={this.state.Docente}>&lt;/ChatColumn>
+                    &lt;/div>
+                &lt;/div>
+            &lt;/Fragment>
+        )
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Auth.html">Auth</a></li><li><a href="module-getIdentificador.html">getIdentificador</a></li><li><a href="module-getJWT.html">getJWT</a></li><li><a href="module-getPosition.html">getPosition</a></li><li><a href="module-getSubscription.html">getSubscription</a></li><li><a href="module-Home.html">Home</a></li><li><a href="module-Identificador.html">Identificador</a></li><li><a href="module-JWT.html">JWT</a></li><li><a href="module-ProtectedRoute.html">ProtectedRoute</a></li><li><a href="module-Push.html">Push</a></li><li><a href="module-send.html">send</a></li><li><a href="module-validatorIdentificador.html">validatorIdentificador</a></li><li><a href="Pages_Bandeja.module_js.html">Pages/Bandeja.js</a></li><li><a href="Pages_Buscador.module_js.html">Pages/Buscador.js</a></li><li><a href="Pages_EditarDocente.module_js.html">Pages/EditarDocente.js</a></li><li><a href="Pages_EditarForo.module_js.html">Pages/EditarForo.js</a></li><li><a href="Pages_forgetPassword.module_js.html">Pages/forgetPassword.js</a></li><li><a href="Pages_Foro.module_js.html">Pages/Foro.js</a></li><li><a href="Pages_ForoComment.module_js.html">Pages/ForoComment.js</a></li><li><a href="Pages_NuevoForo.module_js.html">Pages/NuevoForo.js</a></li><li><a href="Pages_Registro.module_js.html">Pages/Registro.js</a></li></ul><h3>Classes</h3><ul><li><a href="Auth.html">Auth</a></li><li><a href="auth.js.html">auth.js</a></li><li><a href="Identificador.html">Identificador</a></li><li><a href="JWT.html">JWT</a></li><li><a href="Pages_Bandeja.module_js.html">js</a></li><li><a href="Pages_forgetPassword.module_js.html">js</a></li><li><a href="Pages_ForoComment.module_js.html">js</a></li><li><a href="Pages_Login.js.html">Pages/Login.js</a></li><li><a href="Push.html">Push</a></li></ul><h3>Global</h3><ul><li><a href="global.html#%253CJSON%253E"><JSON></a></li><li><a href="global.html#CambiarState">CambiarState</a></li><li><a href="global.html#clearIdentificador">clearIdentificador</a></li><li><a href="global.html#clearJWT">clearJWT</a></li><li><a href="global.html#dataMensaje">dataMensaje</a></li><li><a href="global.html#Error404">Error404</a></li><li><a href="global.html#headers">headers</a></li><li><a href="global.html#Help">Help</a></li><li><a href="global.html#isAuthenticated">isAuthenticated</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#PageBandeja">PageBandeja</a></li><li><a href="global.html#PageBandejaImage">PageBandejaImage</a></li><li><a href="global.html#PageBandejaMensaje">PageBandejaMensaje</a></li><li><a href="global.html#PageCambioPassAdmin">PageCambioPassAdmin</a></li><li><a href="global.html#PageCommentForo">PageCommentForo</a></li><li><a href="global.html#PageConfiguracionAdmin">PageConfiguracionAdmin</a></li><li><a href="global.html#PageCrearCuenta">PageCrearCuenta</a></li><li><a href="global.html#PageDeleteForo">PageDeleteForo</a></li><li><a href="global.html#PageDownloadAdmin">PageDownloadAdmin</a></li><li><a href="global.html#PageEditForo">PageEditForo</a></li><li><a href="global.html#PageForo">PageForo</a></li><li><a href="global.html#PageHomeAdmin">PageHomeAdmin</a></li><li><a href="global.html#PageHomeUso">PageHomeUso</a></li><li><a href="global.html#PageInformacionAdmin">PageInformacionAdmin</a></li><li><a href="global.html#PageMiInicio">PageMiInicio</a></li><li><a href="global.html#PageNewForo">PageNewForo</a></li><li><a href="global.html#PageSesionAdmin">PageSesionAdmin</a></li><li><a href="global.html#RecuperarCuenta">RecuperarCuenta</a></li><li><a href="global.html#sendUsuario">sendUsuario</a></li><li><a href="global.html#setIdentificador">setIdentificador</a></li><li><a href="global.html#setJWT">setJWT</a></li><li><a href="global.html#state">state</a></li><li><a href="global.html#validatorJWT">validatorJWT</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Dec 15 2020 00:19:40 GMT-0600 (hora estándar central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

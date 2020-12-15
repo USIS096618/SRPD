@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Pages/NuevoForo.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Pages/NuevoForo.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { Component, Fragment } from 'react'
+import Editor from '../Components/Editor'
+import Axios from 'axios'
+import Global from '../Global'
+import Swal from 'sweetalert2'
+import HeaderComponent from '../Components/Header'
+import JWT from '../Class/JWT'
+import Identificador from '../Class/Identificador'
+import { Redirect } from 'react-router-dom'
+import NotAccess from '../Components/NotAccess'
+
+/**
+ * @file Es la pagina de creacion de un nuevo foro
+ * @author SRPD
+ * @class
+ * @exports NewForo
+ */
+export default class NewForo extends Component {
+
+    /**
+     * @global
+     */
+    state = {
+        change: false
+    }
+
+    /**
+     * @function checkText
+     * @param {String} text Obtiene el texto que se le pasara a la IA
+     * @returns {Boolean} False si el texto no contiene contenido abusivo, true si lo tiene
+     */
+    checkText = async (text) => {
+        var value = true
+        await Axios.post(Global.servidor + "pruebaAPItext", { text: text.trim() })
+            .then((resp) => {
+                const api = resp.data
+
+                if (!api.profanity) {
+                    value = false
+                } else {
+                    Swal.fire('Contenido de Agresion', api.text, 'error')
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+
+        return value
+    }
+
+    /**
+     * @function sendForo
+     * @param {JSON} data contenido a publicar como nuevo foro
+     */
+    sendForo = (data) => {
+        const headers = {
+            authorization: `Bearer ${JWT.getJWT()}`
+        }
+        Axios.post(Global.servidor + "newForo", data, { headers })
+            .then((resp) => {
+                Swal.fire('Seccion creada correctamente', '', 'success')
+                    .then((resp) => {
+                        if (resp.value) {
+                            this.setState({
+                                change: true
+                            })
+                        }
+                    });
+            })
+            .catch((err) => {
+                Swal.fire('Error al crear una nueva seccion', '', 'info');
+            })
+    }
+
+    /**
+     * @function submitTest
+     * @param {Event} e Trae la informacion del evento
+     */
+    submitTest = async (e) => {
+
+        /**
+         * @constant &lt;String> input
+         */
+        const input = document.getElementById("tituloComment").value
+
+        if (input.trim() === '') {
+            Swal.fire('Titulo', 'El titulo es obligatorio', 'info')
+        }
+        else {
+            Swal.fire({
+                title: 'Creando seccion...',
+                allowOutsideClick: false,
+                onBeforeOpen: () => {
+                    Swal.showLoading()
+                },
+            });
+
+            /**
+             * @constant &lt;String> descripcion
+             * @constant &lt;Element> img
+             * @constant &lt;String> titulo
+             */
+            const descripcion = e;
+            const img = document.getElementById("btn_enviar");
+            const titulo = document.getElementById("tituloComment").value;
+
+            /**
+             * @constant &lt;Boolean> checkTittle
+             */
+            const checkTittle = await this.checkText(titulo);
+
+            if (!checkTittle) {
+
+                /**
+                 * @constant &lt;Boolean> checkDescription
+                 */
+                const checkDescription = await this.checkText(descripcion)
+
+                if (!checkDescription) {
+                    if (img.files[0]) {
+
+                        /**
+                         * @constant &lt;FormData> formData
+                         */
+                        const formData = new FormData();
+
+                        formData.append(
+                            'file0',
+                            img.files[0],
+                            img.files[0].name
+                        )
+
+                        /**
+                         * @constant &lt;JSON> headers
+                         */
+                        const headers = {
+                            authorization: `Bearer ${JWT.getJWT()}`
+                        }
+
+                        Axios.post(Global.servidor + "saveImageForo", formData, { headers })
+                            .then((resp) => {
+
+                                /**
+                                 * @constant &lt;JSON> headers
+                                 */
+                                const informationSend = {
+                                    titulo,
+                                    descripcion,
+                                    imagen: resp.data.image,
+                                    DocenteId: Identificador.getIdentificador()
+                                }
+
+                                Axios.post(Global.servidor + "pruebaAPI", { url: informationSend.imagen }).then((resp) => {
+
+                                    if (resp.data.profanity || resp.data.nudity) {
+                                        Swal.fire('', resp.data.message, 'error')
+
+                                    }
+                                    else {
+
+                                        this.sendForo(informationSend)
+                                    }
+                                }).catch((err) => {
+                                    console.log(err);
+                                })
+
+                            })
+                            .catch((err) => {
+                                Swal.fire('Error al subir imagen', '', 'info');
+                            })
+                    } else {
+                        /**
+                         * @constant &lt;JSON> headers
+                         */
+                        const informationSend = {
+                            titulo,
+                            descripcion,
+                            imagen: '',
+                            DocenteId: Identificador.getIdentificador()
+                        }
+
+                        this.sendForo(informationSend)
+                    }
+                }
+
+            }
+
+        }
+
+    }
+
+    /**
+     * @function render
+     * @returns {HTML} Regresa la vista de la pagina de nuevo foro 
+     */
+    render() {
+
+        if (this.state.change) {
+            return (&lt;Redirect to="/Foro">&lt;/Redirect>)
+        }
+        return (
+            &lt;Fragment>
+                &lt;HeaderComponent>&lt;/HeaderComponent>
+                {
+                    !Identificador.validatorIdentificador() ? (
+                        &lt;NotAccess>&lt;/NotAccess>
+                    ) : (
+                            &lt;Editor onSubmit={this.submitTest}>&lt;/Editor>
+                        )
+                }
+
+            &lt;/Fragment>
+        )
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Auth.html">Auth</a></li><li><a href="module-getIdentificador.html">getIdentificador</a></li><li><a href="module-getJWT.html">getJWT</a></li><li><a href="module-getPosition.html">getPosition</a></li><li><a href="module-getSubscription.html">getSubscription</a></li><li><a href="module-Home.html">Home</a></li><li><a href="module-Identificador.html">Identificador</a></li><li><a href="module-JWT.html">JWT</a></li><li><a href="module-ProtectedRoute.html">ProtectedRoute</a></li><li><a href="module-Push.html">Push</a></li><li><a href="module-send.html">send</a></li><li><a href="module-validatorIdentificador.html">validatorIdentificador</a></li><li><a href="Pages_Bandeja.module_js.html">Pages/Bandeja.js</a></li><li><a href="Pages_Buscador.module_js.html">Pages/Buscador.js</a></li><li><a href="Pages_EditarDocente.module_js.html">Pages/EditarDocente.js</a></li><li><a href="Pages_EditarForo.module_js.html">Pages/EditarForo.js</a></li><li><a href="Pages_forgetPassword.module_js.html">Pages/forgetPassword.js</a></li><li><a href="Pages_Foro.module_js.html">Pages/Foro.js</a></li><li><a href="Pages_ForoComment.module_js.html">Pages/ForoComment.js</a></li><li><a href="Pages_NuevoForo.module_js.html">Pages/NuevoForo.js</a></li><li><a href="Pages_Registro.module_js.html">Pages/Registro.js</a></li></ul><h3>Classes</h3><ul><li><a href="Auth.html">Auth</a></li><li><a href="auth.js.html">auth.js</a></li><li><a href="Identificador.html">Identificador</a></li><li><a href="JWT.html">JWT</a></li><li><a href="Pages_Bandeja.module_js.html">js</a></li><li><a href="Pages_forgetPassword.module_js.html">js</a></li><li><a href="Pages_ForoComment.module_js.html">js</a></li><li><a href="Pages_Login.js.html">Pages/Login.js</a></li><li><a href="Push.html">Push</a></li></ul><h3>Global</h3><ul><li><a href="global.html#%253CJSON%253E"><JSON></a></li><li><a href="global.html#CambiarState">CambiarState</a></li><li><a href="global.html#clearIdentificador">clearIdentificador</a></li><li><a href="global.html#clearJWT">clearJWT</a></li><li><a href="global.html#dataMensaje">dataMensaje</a></li><li><a href="global.html#Error404">Error404</a></li><li><a href="global.html#headers">headers</a></li><li><a href="global.html#Help">Help</a></li><li><a href="global.html#isAuthenticated">isAuthenticated</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#PageBandeja">PageBandeja</a></li><li><a href="global.html#PageBandejaImage">PageBandejaImage</a></li><li><a href="global.html#PageBandejaMensaje">PageBandejaMensaje</a></li><li><a href="global.html#PageCambioPassAdmin">PageCambioPassAdmin</a></li><li><a href="global.html#PageCommentForo">PageCommentForo</a></li><li><a href="global.html#PageConfiguracionAdmin">PageConfiguracionAdmin</a></li><li><a href="global.html#PageCrearCuenta">PageCrearCuenta</a></li><li><a href="global.html#PageDeleteForo">PageDeleteForo</a></li><li><a href="global.html#PageDownloadAdmin">PageDownloadAdmin</a></li><li><a href="global.html#PageEditForo">PageEditForo</a></li><li><a href="global.html#PageForo">PageForo</a></li><li><a href="global.html#PageHomeAdmin">PageHomeAdmin</a></li><li><a href="global.html#PageHomeUso">PageHomeUso</a></li><li><a href="global.html#PageInformacionAdmin">PageInformacionAdmin</a></li><li><a href="global.html#PageMiInicio">PageMiInicio</a></li><li><a href="global.html#PageNewForo">PageNewForo</a></li><li><a href="global.html#PageSesionAdmin">PageSesionAdmin</a></li><li><a href="global.html#RecuperarCuenta">RecuperarCuenta</a></li><li><a href="global.html#sendUsuario">sendUsuario</a></li><li><a href="global.html#setIdentificador">setIdentificador</a></li><li><a href="global.html#setJWT">setJWT</a></li><li><a href="global.html#state">state</a></li><li><a href="global.html#validatorJWT">validatorJWT</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Dec 15 2020 00:19:40 GMT-0600 (hora estándar central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
