@@ -12,7 +12,7 @@ const Global = {
     // servidor: 'http://localhost:3900/',
     // ConnectChat: io('http://localhost:3380'),
     servidor: 'https://srpd-backend.herokuapp.com/',
-    ConnectChat: io('https://chat-srpd.herokuapp.com/'),
+    ConnectChat: io('https://chat-srpd2.herokuapp.com/'),
     EstadoCivil: [
         {value: "Soltero/a", label: "Soltero/a"},
         {value: "Comprometido/a", label: "Comprometido/a"},
